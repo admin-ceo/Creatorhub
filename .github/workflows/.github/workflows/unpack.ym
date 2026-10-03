@@ -1,0 +1,30 @@
+name: Unpack CreatorHub
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract CreatorHub
+        run: |
+          mkdir -p extracted
+          unzip -q creatorhub.zip -d extracted
+          cp -R extracted/creatorhub-deploy/. .
+          rm -rf extracted
+          rm -f creatorhub.zip
+
+      - name: Commit extracted project
+        run: |
+          git config user.name "github-actions[bot]
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Extract CreatorHub deployment project" || echo "Nothing to commit"
+          git push
